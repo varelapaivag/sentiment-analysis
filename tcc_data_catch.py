@@ -42,18 +42,54 @@ def scrappe_comments(driver, name):
 
     time.sleep(7)
    
-    # Encontro do link para entrar na publicação
-    post_link = WebDriverWait(driver, 10).until(
-        EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a[href*="/p/"]'))
-    )
+                                  
+    dados = []
+    post_link = driver.find_elements(By.CSS_SELECTOR, 'a[href*="/p/"]')
 
     #entrada em cada postagem
     for link in post_link:
-        post_url =link.get_attribute('href')
-        
-        driver.get(post_url)
+        #Encontrar os links de postagens
+        link.click()
+        time.sleep(15)
 
-        time.sleep(5)
+        #Usuários
+        users = driver.find_elements(By.CSS_SELECTOR,'span._ap3a._aaco._aacw._aacx._aad7._aade[dir="auto"]')
+        
+        users_instagram = []
+        for i in users:
+            users_instagram.append(i.text)
+    
+        # Comentários
+        comments = driver.find_elements(By.CSS_SELECTOR, 'span.x1lliihq.x1plvlek.xryxfnj.x1n2onr6.x193iq5w.xeuugli.x1fj9vlw.x13faqbe.x1vvkbs.x1s928wv.xhkezso.x1gmr53x.x1cpjm7i.\
+                                                        x1fgarty.x1943h6x.x1i0vuye.xvs91rp.xo1l8bm.x5n08af.x10wh9bi.x1wdrske.x8viiok.x18hxmgj[dir="auto"][style="line-height:\
+                                                        var(--base-line-clamp-line-height); --base-line-clamp-line-height: 18px;"]')
+        
+            #Separação de comentários do instagram 
+        comments_instagram = []
+        for i in range(1, len(comments)):
+            if i % 2 == 0:
+                comments_instagram.append(comments[i].text)
+
+
+        #curtida do comentário
+        likes = driver.find_elements(By.CSS_SELECTOR,'span.x1lliihq.x1plvlek.xryxfnj.x1n2onr6.x193iq5w.xeuugli.x1fj9vlw.x13faqbe.x1vvkbs.x1s928wv.xhkezso.x1gmr53x.x1cpjm7i.x1fgarty.x1943h6x.x1i0vuye.\
+                                                        x1fhwpqd.x1s688f.x1roi4f4.x1s3etm8.x676frb.x10wh9bi.x1wdrske.x8viiok.x18hxmgj[dir="auto"][style="line-height: var(--base-line-clamp-line-height);\
+                                                        --base-line-clamp-line-height: 16px;"]')
+        
+            # Abordar apenas linhas com curtidas
+        likes_instagram = []
+        for i in range(len(likes)):
+            if "curtidas" in likes[i].text: 
+                likes_instagram.append(likes[i].text)
+
+        
+        
+        # Arquivar tudo em uma lista
+        dados.append([users_instagram,comments_instagram, likes_instagram])
+
+        time.sleep(10)
+
+        driver.quit()
                                                      
 
 
