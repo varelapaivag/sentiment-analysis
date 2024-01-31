@@ -18,60 +18,9 @@ from time import sleep
 
 
 
-# Carregando a página do Instagram
-url = 'http://www.instagram.com'
-
-# Solicita ao usuário que insira os links separados por vírgula
-post_links_input = input('Adicione os links que gostaria de fazer scraping (separe os links por vírgula): ')
-post_link = post_links_input.split(',')
-# Carregar credenciais de login
-with open('login.txt') as file:
-    login = json.load(file)
-    username = login.get("username", None)
-    password = login.get("password", None)
-
-
-
-
-# def login(username, password):
-options = Options()
-options.page_load_strategy = 'none'
-driver = webdriver.Chrome(options=options)
-
-# Login
-driver.get(url)
-
-
-WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.XPATH, '//*[@id="loginForm"]')))
-
-email_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="loginForm"]//input[@name="username"]')))
-email_input.send_keys(username)
-
-password_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="loginForm"]//input[@name="password"]')))
-password_input.send_keys(password)
-
-submit = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="loginForm"]/div/div[3]/button')))
-submit.click()
-
-sleep(6)
-
-# ========================================================================
-# Scrapping nas paginas desejadas
-nomes = []
-
-# Itera sobre a lista de links
-for i, link in enumerate(post_link):
-    nome = f'scrapping_{i + 1}' 
-    nomes.append(nome)
-
-
-
-# entrada em cada postagem
-for nome_postagem, link in zip(nomes, post_link):
-    # Encontrar os links de postagens
+def scrapping(driver, link, nome_postagem):
     driver.get(link)
-    sleep(15)
-    
+    sleep(8)
     # Scrollar os comentários da página, com a intenção de captar o máximo de informações
     element = driver.find_element(By.CSS_SELECTOR, '.x5yr21d.xw2csxc.x1odjw0f.x1n2onr6')
 
@@ -144,5 +93,63 @@ for nome_postagem, link in zip(nomes, post_link):
 
     time.sleep(10)
 
-# Encerrar o WebDriver
-driver.quit()
+    # Encerrar o WebDriver
+    driver.quit()
+
+
+
+
+
+# Carregando a página do Instagram
+url = 'http://www.instagram.com'
+
+if  __name__ == "__main__":
+    # Carregar credenciais de login
+    with open('login.txt') as file:
+        login = json.load(file)
+        username = login.get("username", None)
+        password = login.get("password", None)
+
+
+    # def login(username, password):
+    options = Options()
+    options.page_load_strategy = 'none'
+    driver = webdriver.Chrome(options=options)
+
+    # Login
+    driver.get(url)
+
+
+    WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.XPATH, '//*[@id="loginForm"]')))
+
+    email_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="loginForm"]//input[@name="username"]')))
+    email_input.send_keys(username)
+
+    password_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="loginForm"]//input[@name="password"]')))
+    password_input.send_keys(password)
+
+    submit = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="loginForm"]/div/div[3]/button')))
+    submit.click()
+
+    sleep(6)
+
+# ========================================================================
+
+# Solicitar ao usuário os links
+post_links_input = input('Adicione os links que gostaria de fazer scraping (separe os links por vírgula): ')
+post_links = post_links_input.split(',')
+
+# Scrapping nas páginas desejadas
+nomes = []
+
+# Iterar sobre a lista de links
+for i, link in enumerate(post_links):
+    nome = f'scrapping_{i + 1}' 
+    nomes.append(nome)
+
+for nome_postagem, link in zip(nomes, post_links):
+    scrapping(driver, link, nome_postagem)
+    time.sleep(10)
+
+
+
