@@ -7,7 +7,7 @@ import googleapiclient.errors
 api_service_name = 'youtube'
 api_version = 'v3'
 
-API_KEY = 'AIzaSyCAz-e0UnsFwEuDSraYOqpr5ketaMUVZro'
+API_KEY = 'API_KEY'
 
 youtube = googleapiclient.discovery.build( api_service_name, 
                                            api_version,
